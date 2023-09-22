@@ -159,11 +159,11 @@ add_library(skyline SHARED
         ${source_DIR}/loader_jni.cpp
         ${source_DIR}/skyline/common.cpp
         ${source_DIR}/skyline/common/exception.cpp
-        ${source_DIR}/skyline/common/logger.cpp
         ${source_DIR}/skyline/common/signal.cpp
         ${source_DIR}/skyline/common/spin_lock.cpp
         ${source_DIR}/skyline/common/uuid.cpp
         ${source_DIR}/skyline/common/trace.cpp
+        ${source_DIR}/skyline/logger/logger.cpp
         ${source_DIR}/skyline/nce/guest.S
         ${source_DIR}/skyline/nce.cpp
         ${source_DIR}/skyline/jvm.cpp
@@ -306,6 +306,7 @@ add_library(skyline SHARED
         ${source_DIR}/skyline/services/bcat/IDeliveryCacheFileService.cpp
         ${source_DIR}/skyline/services/bcat/IDeliveryCacheDirectoryService.cpp
         ${source_DIR}/skyline/services/bcat/IServiceCreator.cpp
+        ${source_DIR}/skyline/services/bcat/IDeliveryCacheProgressService.cpp
         ${source_DIR}/skyline/services/bt/IBluetoothUser.cpp
         ${source_DIR}/skyline/services/btm/IBtmUser.cpp
         ${source_DIR}/skyline/services/btm/IBtmUserCore.cpp
@@ -346,6 +347,7 @@ add_library(skyline SHARED
         ${source_DIR}/skyline/services/fssrv/IStorage.cpp
         ${source_DIR}/skyline/services/fssrv/IDirectory.cpp
         ${source_DIR}/skyline/services/fssrv/IMultiCommitManager.cpp
+        ${source_DIR}/skyline/services/fssrv/ISaveDataInfoReader.cpp
         ${source_DIR}/skyline/services/nvdrv/INvDrvServices.cpp
         ${source_DIR}/skyline/services/nvdrv/driver.cpp
         ${source_DIR}/skyline/services/nvdrv/core/nvmap.cpp
@@ -370,6 +372,7 @@ add_library(skyline SHARED
         ${source_DIR}/skyline/services/aocsrv/IPurchaseEventManager.cpp
         ${source_DIR}/skyline/services/pctl/IParentalControlServiceFactory.cpp
         ${source_DIR}/skyline/services/pctl/IParentalControlService.cpp
+        ${source_DIR}/skyline/services/lbl/ILblController.cpp
         ${source_DIR}/skyline/services/lm/ILogService.cpp
         ${source_DIR}/skyline/services/lm/ILogger.cpp
         ${source_DIR}/skyline/services/ldn/IUserServiceCreator.cpp
@@ -403,6 +406,12 @@ add_library(skyline SHARED
         ${source_DIR}/skyline/services/mii/IStaticService.cpp
         ${source_DIR}/skyline/services/mii/IDatabaseService.cpp
         ${source_DIR}/skyline/services/olsc/IOlscServiceForApplication.cpp
+        ${source_DIR}/skyline/services/clkrst/IClkrstManager.cpp
+        ${source_DIR}/skyline/services/clkrst/IClkrstSession.cpp
+        ${source_DIR}/skyline/services/psm/IPsmServer.cpp
+        ${source_DIR}/skyline/services/psm/IPsmSession.cpp
+        ${source_DIR}/skyline/services/ts/IMeasurementServer.cpp
+        ${source_DIR}/skyline/services/ts/ISession.cpp
         ${source_DIR}/skyline/services/ntc/IEnsureNetworkClockAvailabilityService.cpp
         )
 target_include_directories(skyline PRIVATE ${source_DIR}/skyline)

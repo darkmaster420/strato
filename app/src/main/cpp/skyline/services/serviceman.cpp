@@ -34,6 +34,7 @@
 #include "pl/shared_font_core.h"
 #include "aocsrv/IAddOnContentManager.h"
 #include "pctl/IParentalControlServiceFactory.h"
+#include "lbl/ILblController.h"
 #include "lm/ILogService.h"
 #include "ldn/IUserServiceCreator.h"
 #include "account/IAccountServiceForApplication.h"
@@ -57,6 +58,9 @@
 #include "ro/IRoInterface.h"
 #include "mii/IStaticService.h"
 #include "olsc/IOlscServiceForApplication.h"
+#include "clkrst/IClkrstManager.h"
+#include "ts/IMeasurementServer.h"
+#include "psm/IPsmServer.h"
 #include "ntc/IEnsureNetworkClockAvailabilityService.h"
 #include "serviceman.h"
 
@@ -118,6 +122,7 @@ namespace skyline::service {
             SERVICE_CASE(pctl::IParentalControlServiceFactory, "pctl:a")
             SERVICE_CASE(pctl::IParentalControlServiceFactory, "pctl:s")
             SERVICE_CASE(pctl::IParentalControlServiceFactory, "pctl:r")
+            SERVICE_CASE(lbl::ILblController, "lbl")
             SERVICE_CASE(lm::ILogService, "lm")
             SERVICE_CASE(ldn::IUserServiceCreator, "ldn:u")
             SERVICE_CASE(account::IAccountServiceForApplication, "acc:u0")
@@ -146,6 +151,9 @@ namespace skyline::service {
             SERVICE_CASE(mii::IStaticService, "mii:e")
             SERVICE_CASE(mii::IStaticService, "mii:u")
             SERVICE_CASE(olsc::IOlscServiceForApplication, "olsc:u")
+            SERVICE_CASE(clkrst::IClkrstManager, "clkrst")
+            SERVICE_CASE(ts::IMeasurementServer, "ts")
+            SERVICE_CASE(psm::IPsmServer, "psm")
             SERVICE_CASE(ntc::IEnsureNetworkClockAvailabilityService, "ntc")
             default:
                 std::string_view nameString(span(reinterpret_cast<char *>(&name), sizeof(name)).as_string(true));
@@ -165,7 +173,7 @@ namespace skyline::service {
             handle = state.process->NewHandle<type::KSession>(serviceObject).handle;
             response.moveHandles.push_back(handle);
         }
-        Logger::Debug("Service has been created: \"{}\" (0x{:X})", serviceObject->GetName(), handle);
+        LOGD("Service has been created: \"{}\" (0x{:X})", serviceObject->GetName(), handle);
         return serviceObject;
     }
 
@@ -182,7 +190,7 @@ namespace skyline::service {
             response.moveHandles.push_back(handle);
         }
 
-        Logger::Debug("Service has been registered: \"{}\" (0x{:X})", serviceObject->GetName(), handle);
+        LOGD("Service has been registered: \"{}\" (0x{:X})", serviceObject->GetName(), handle);
     }
 
     void ServiceManager::CloseSession(KHandle handle) {
@@ -206,8 +214,8 @@ namespace skyline::service {
     void ServiceManager::SyncRequestHandler(KHandle handle) {
         TRACE_EVENT("kernel", "ServiceManager::SyncRequestHandler");
         auto session{state.process->GetHandle<type::KSession>(handle)};
-        Logger::Verbose("----IPC Start----");
-        Logger::Verbose("Handle is 0x{:X}", handle);
+        LOGV("----IPC Start----");
+        LOGV("Handle is 0x{:X}", handle);
 
         if (session->isOpen) {
             ipc::IpcRequest request(session->isDomain, state);
@@ -244,7 +252,7 @@ namespace skyline::service {
 
                 case ipc::CommandType::Control:
                 case ipc::CommandType::ControlWithContext:
-                    Logger::Debug("Control IPC Message: 0x{:X}", request.payload->value);
+                    LOGD("Control IPC Message: 0x{:X}", request.payload->value);
                     switch (static_cast<ipc::ControlCommand>(request.payload->value)) {
                         case ipc::ControlCommand::ConvertCurrentObjectToDomain:
                             response.Push(session->ConvertDomain());
@@ -267,7 +275,7 @@ namespace skyline::service {
 
                 case ipc::CommandType::Close:
                 case ipc::CommandType::TipcCloseSession:
-                    Logger::Debug("Closing Session");
+                    LOGD("Closing Session");
                     CloseSession(handle);
                     break;
                 default:
@@ -280,8 +288,8 @@ namespace skyline::service {
                     }
             }
         } else {
-            Logger::Warn("svcSendSyncRequest called on closed handle: 0x{:X}", handle);
+            LOGW("svcSendSyncRequest called on closed handle: 0x{:X}", handle);
         }
-        Logger::Verbose("====IPC End====");
+        LOGV("====IPC End====");
     }
 }
